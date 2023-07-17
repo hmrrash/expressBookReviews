@@ -66,7 +66,7 @@ public_users.get('/review/:isbn',function (req, res) {
   const isbn = parseInt(req.params.isbn);
   if (isbn) {
       book = books[isbn];
-      res.send(JSON.stringify(book,null,4))
+      res.send(book.reviews)
     }
 });
 
