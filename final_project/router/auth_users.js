@@ -43,11 +43,38 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = parseInt(req.params.isbn);
   const review = req.query.review;
-  const user = req.session.username;
-  
+  const user = req.session.authorization.username;
+    
   let book = books[isbn];
-  
-  return res.status(300).json({message: "Yet to be implemented"});
+  if (book && (review.length > 0)) {
+      book.reviews[user] = review;
+      books[isbn] = book;
+      return res.status(200).json({message: `Review added by ${user} for ${book.title}`});
+    }
+    else{
+        return res.status(300).json({message: "Something went wrong."})
+    }  
+});
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = parseInt(req.params.isbn);
+    const user = req.session.authorization.username;
+    let book = books[isbn];
+    console.log(JSON.stringify(book,null,4));
+    let reviews = book.reviews;
+    if (reviews[user]) {
+        delete reviews[user];
+        book.reviews = reviews;
+        books[isbn] = book;
+        return res.status(200).json({message: `Review by ${user} has been deleted`})
+    }
+    else{
+        return res.status(300).json({message: "Not impliemented yet"})
+    }
+    
+    
+    
+
 });
 
 module.exports.authenticated = regd_users;
